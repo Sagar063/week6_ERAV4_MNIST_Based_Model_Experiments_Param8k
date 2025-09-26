@@ -1,0 +1,10 @@
+exp_name,params,best_test_acc,best_epoch,final_test_acc,epochs,train_time_sec,augment,optimizer,lr,use_steplr
+m1_big,467818,0.992,2,0.992,2,17.39291501045227,False,adam,0.001,False
+m2_light_bn,22098,0.9883,2,0.9883,2,21.263227224349976,False,adam,0.001,False
+m2_light_bn_do,22098,0.9881,2,0.9881,2,21.565234184265137,False,adam,0.001,False
+m3_aug_steplr,2376,0.986,11,0.9839,15,140.5277132987976,True,sgd,0.05,True
+m3_capacity,11488,0.9839,2,0.9839,2,20.568864822387695,False,sgd,0.05,False
+m2_light_do,22026,0.9819,2,0.9819,2,20.65209698677063,False,adam,0.001,False
+m1_light,22026,0.9817,2,0.9817,2,16.964866399765015,False,adam,0.001,False
+m3_poolfix,5708,0.9782,2,0.9782,2,18.242290496826172,False,sgd,0.05,False
+m2_light_bn_do_gap,3008,0.9548,2,0.9548,2,18.5189208984375,False,adam,0.001,False
