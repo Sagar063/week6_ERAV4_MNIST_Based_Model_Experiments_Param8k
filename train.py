@@ -355,9 +355,13 @@ def build_experiments(args, selected_prefixes, run_all_families):
     exps = []
 
     # ===== model1.py =====
-    exps.append({"name": "m1_big", "model_fn": M1.Model1_Big,   "epochs": args.epochs, "optimizer": args.optimizer, "lr": args.lr, "batch_size": args.batch_size})
-    exps.append({"name": "m1_light","model_fn": M1.Model1_Light,"epochs": args.epochs, "optimizer": args.optimizer, "lr": args.lr, "batch_size": args.batch_size})
+    # exps.append({"name": "m1_big", "model_fn": M1.Model1_Big,   "epochs": args.epochs, "optimizer": args.optimizer, "lr": args.lr, "batch_size": args.batch_size})
+    # exps.append({"name": "m1_light","model_fn": M1.Model1_Light,"epochs": args.epochs, "optimizer": args.optimizer, "lr": args.lr, "batch_size": args.batch_size})
+    # exps.append({"name": "m1_skeleton", "model_fn": M1.Model1_Skeleton, "epochs": args.epochs, "optimizer": args.optimizer, "lr": args.lr, "batch_size": args.batch_size})
 
+    exps.append({"name": "m1_big", "model_fn": M1.Model1_Big,   "epochs": args.epochs, "optimizer": args.optimizer, "lr": 0.01, "batch_size": args.batch_size})
+    exps.append({"name": "m1_light","model_fn": M1.Model1_Light,"epochs": args.epochs, "optimizer": args.optimizer, "lr": 0.01, "batch_size": args.batch_size})
+    exps.append({"name": "m1_skeleton", "model_fn": M1.Model1_Skeleton, "epochs": args.epochs, "optimizer": args.optimizer, "lr": 0.01, "batch_size": args.batch_size})
     # ===== model2.py =====
     exps.append({"name": "m2_light_bn",        "model_fn": M2.Model2_Light_BN,        "epochs": args.epochs, "optimizer": args.optimizer, "lr": args.lr, "batch_size": args.batch_size})
     exps.append({"name": "m2_light_do",        "model_fn": M2.Model2_Light_DO,        "epochs": args.epochs, "optimizer": args.optimizer, "lr": args.lr, "batch_size": args.batch_size})
@@ -365,9 +369,12 @@ def build_experiments(args, selected_prefixes, run_all_families):
     exps.append({"name": "m2_light_bn_do_gap", "model_fn": M2.Model2_Light_BN_DO_GAP, "epochs": args.epochs, "optimizer": args.optimizer, "lr": args.lr, "batch_size": args.batch_size})
 
     # ===== model3.py =====
-    exps.append({"name": "m3_capacity",   "model_fn": M3.Model3_CapacityUp,  "epochs": min(args.epochs, 15), "optimizer": "sgd", "lr": 0.05, "batch_size": args.batch_size})
-    exps.append({"name": "m3_poolfix",    "model_fn": M3.Model3_PoolFixed,   "epochs": min(args.epochs, 15), "optimizer": "sgd", "lr": 0.05, "batch_size": args.batch_size})
-    exps.append({"name": "m3_aug_steplr", "model_fn": M3.Model3_TinyTarget,  "epochs": 15,                 "optimizer": "sgd", "lr": 0.05, "batch_size": args.batch_size, "augment": True, "use_steplr": True, "steplr_step": 5, "steplr_gamma": 0.5})
+    exps.append({"name": "m3_capacity",           "model_fn": M3.Model3_CapacityUp,  "epochs": min(args.epochs, 15), "optimizer": args.optimizer, "lr": args.lr, "batch_size": args.batch_size})
+    exps.append({"name": "m3_poolfix",            "model_fn": M3.Model3_PoolFixed,   "epochs": min(args.epochs, 15), "optimizer": args.optimizer, "lr": args.lr, "batch_size": args.batch_size})
+    exps.append({"name": "m3_poolfix_aug",        "model_fn": M3.Model3_PoolFixed,   "epochs": min(args.epochs, 15), "optimizer": args.optimizer, "lr": args.lr, "batch_size": args.batch_size,"augment": True})
+    exps.append({"name": "m3_poolfix_steplr",     "model_fn": M3.Model3_PoolFixed,  "epochs": min(args.epochs, 15),  "optimizer": args.optimizer, "lr": args.lr, "batch_size": args.batch_size,                  "use_steplr": True, "steplr_step": 5, "steplr_gamma": 0.5})
+    exps.append({"name": "m3_poolfix_aug_steplr", "model_fn": M3.Model3_PoolFixed,  "epochs": min(args.epochs, 15),  "optimizer": args.optimizer, "lr": args.lr, "batch_size": args.batch_size, "augment": True, "use_steplr": True, "steplr_step": 5, "steplr_gamma": 0.5})
+    exps.append({"name": "m3_depthwiseConv_aug_steplr","model_fn": M3.Model3_TinyTarget,  "epochs": min(args.epochs, 15), "optimizer": args.optimizer, "lr": args.lr, "batch_size": args.batch_size, "augment": True, "use_steplr": True, "steplr_step": 5, "steplr_gamma": 0.5})
 
     # Family filter
     if not run_all_families:
@@ -399,7 +406,7 @@ def main():
     parser.add_argument("--epochs", type=int, default=10, help="Epochs per run")
     parser.add_argument("--batch_size", type=int, default=128)
     parser.add_argument("--optimizer", type=str, default="adam", choices=["adam","sgd"])
-    parser.add_argument("--lr", type=float, default=1e-3)
+    parser.add_argument("--lr", type=float, default=1e-3 ) # default= 0.05 for sgd
     parser.add_argument("--seed", type=int, default=42)
     args = parser.parse_args()
 
