@@ -1,41 +1,47 @@
-MNIST Multi-Model Experiments (PyTorch)
+# MNIST Multi-Model Experiments (PyTorch)
 
-Baselines → BN/Dropout/GAP → Aug+StepLR to reach ≥99.4% in ≤15 epochs with ≤8k params.
+Approach : Model 1 is our Baselines → Model 2 where we perform BN/Dropout/GAP → Model 3 where we perform Augmentation+StepLR 
 
-Repository Structure
+Objective : To reach ≥99.4% in ≤15 epochs with ≤8k params.
+
+## Repository Structure
 
 train.py — runner (CLI families, model summary, tqdm, plots, metrics, checkpoints)
 
-model1.py — baselines: Big (~194k), Light (~10.7k)
+model1.py — baselines: Big (~457k), Skeleton (~1.94k), Light (~8.7k)
 
 model2.py — Light + BN / DO / BN+DO / BN+DO+GAP
 
-model3.py — capacity, pooling fix, tiny+Aug+StepLR target
+model3.py — capacity, pooling fix, Depthwise convolution+ Aug+StepLR target
 
 results/ — per-run CSVs, plots, confusion matrices, summary.csv
 
 checkpoints/ — best weights per experiment
 
-Setup
+## Setup
 pip install -r requirements.txt
 
 
 If you have a CUDA GPU, use the matching Torch/TorchVision wheels (see requirements.txt notes).
 
-Usage
-# run all
+##Usage
+### run all
+```bash
 python train.py --epochs 15 --batch_size 128
-
-# run only model families
+```
+### run only model families
+```bash
 python train.py --model1 --epochs 15
 python train.py model2 --epochs 15
 python train.py --model3 --epochs 15
+```
 
-# run specific experiments
+### run specific experiments
+```bash
 python train.py --model2 --only m2_light_bn_do_gap --epochs 15
+```
 
-
-Outputs
+##Outputs
 
 Metrics per run: results/metrics_<exp>.csv
 
@@ -45,10 +51,11 @@ Best checkpoints: checkpoints/<exp>/best.pt
 
 Consolidated: results/summary.csv
 
-Dataset & Normalization
+## Dataset & Normalization
 
 MNIST (60k train / 10k test, 28×28 grayscale).
 Normalization is computed on the training set only and applied to both train and test.
+
 
 <!-- DATA_STATS -->
 ### Dataset & Runs Snapshot
@@ -79,16 +86,19 @@ Normalization is computed on the training set only and applied to both train and
 | model3 | poolfix_steplr | 1 |
 <!-- /DATA_STATS -->
 
-Experiments (Objectives → Variants → Results → Analysis)
-Model1 — Baselines
+##Experiments (Objectives → Variants → Results → Analysis)
+
+###Model1 — Baselines
 
 Objective: Establish reference points for capacity vs accuracy with one large and one compact CNN.
 
 Variants
 
-m1_big — deeper CNN (~194k params).
+m1_big — deeper CNN (~457k params).
 
-m1_light — compact CNN (~10.7k params).
+m1_light — compact CNN (~8.7k params).
+
+m1_skeleton (~195.3k)
 
 Auto-generated results and analysis
 
@@ -164,7 +174,7 @@ Auto-generated results and analysis
 - ![](results/plots/acc_m1_light.png)
 <!-- /MODEL1_RESULTS -->
 
-Model2 — Light Model Improvements
+###Model2 — Light Model Improvements
 
 Objective: Improve the light baseline’s stability and generalization; reduce parameters via GAP.
 
@@ -181,6 +191,7 @@ Variants
 m2_light_bn, m2_light_do, m2_light_bn_do, m2_light_bn_do_gap
 
 Auto-generated results and analysis
+
 
 <!-- MODEL2_RESULTS -->
 ### model2 Results
@@ -267,7 +278,7 @@ Auto-generated results and analysis
 - ![](results/plots/acc_m2_light_do.png)
 <!-- /MODEL2_RESULTS -->
 
-Model3 — Advanced Tweaks Toward Target
+### Model3 — Advanced Tweaks Toward Target
 
 Objective: Hit ≥99.4% consistently (last few epochs), ≤15 epochs, ≤8k parameters.
 
@@ -277,13 +288,13 @@ Capacity tuning (judiciously increasing channels)
 
 Correct pooling placement (after sufficient convs)
 
-Data augmentation (rotation/affine/perspective/erasing)
+Data augmentation (rotation)
 
 StepLR scheduling (refine late-epoch learning)
 
 Variants
 
-m3_capacity, m3_poolfix, m3_aug_steplr (tiny + Aug + StepLR, target)
+m3_capacity, m3_poolfix, m3_poolfix_aug, m3_poolfix_steplr, m3_poolfix_aug_steplr,  m3_depthwiseConv_aug_steplr (depth-wise conv + Augmentation + StepLR)
 
 Auto-generated results, target checks, and analysis
 
@@ -410,7 +421,7 @@ Auto-generated results, target checks, and analysis
 - ![](results/plots/acc_m3_depthwiseConv_aug_steplr.png)
 <!-- /MODEL3_RESULTS -->
 
-Consolidated Results
+##Consolidated Results
 <!-- CONSOLIDATED_RESULTS -->
 ### Consolidated Leaderboard
 
@@ -431,29 +442,33 @@ Consolidated Results
 | model2 | light_do | 98.19% | 10,880 |
 <!-- /CONSOLIDATED_RESULTS -->
 
-Observations & Learnings
+## Observations & Learnings
 
-Capacity vs. accuracy trade-off (e.g., m1_big vs m1_light)
+- **Capacity vs. Accuracy**  
+  - m1_big: Heavy model, overfits, unnecessary for MNIST.  
+  - m1_light: Much smaller yet competitive with >99% accuracy.  
 
-BN/DO effects (stability/overfitting vs m1_light)
+- **Regularization (Model2)**  
+  - BatchNorm stabilized training and accelerated convergence.  
+  - Dropout reduced overfitting but slowed training.  
+  - GAP achieved parameter reduction with minimal accuracy trade-off.  
 
-GAP efficiency (parameter cuts with minimal accuracy loss)
+- **Advanced Tweaks (Model3)**  
+  - Pooling fix improved feature hierarchy.  
+  - StepLR + augmentation consistently hit ≥99.4% within ≤15 epochs.  
+  - Depthwise conv variant reached the target with the lowest parameter count.  
 
-Augmentation + StepLR impact (pushing tiny model to the target)
+- **Key Takeaway**  
+  Smart architecture + regularization > raw parameter count.  
 
-<!-- OBSERVATIONS -->
-### Observations
-- *Add commentary here:* trends, overfitting signals, BN/Dropout impact, optimizer effects, etc.
-- This section is maintained by the script; you can edit the bullet points and the script will keep the block.
-<!-- /OBSERVATIONS -->
 
-Reproducibility
 
-Seed used: 42
 
-Same normalization stats applied to both train & test
 
-Environment:
+## Same normalization stats applied to both train & test  - "mean":0.1307,"std":0.3081
+
+##Environment:
+
 
 <!-- ENV_INFO -->
 ### Environment Info
@@ -462,7 +477,7 @@ Environment:
 - PyTorch 2.6.0+cu124, CUDA available: True, device: NVIDIA GeForce RTX 4060 Ti
 <!-- /ENV_INFO -->
 
-References
+##References
 
 PyTorch: https://pytorch.org/docs/stable/
 

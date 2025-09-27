@@ -56,6 +56,7 @@ Consolidated: results/summary.csv
 MNIST (60k train / 10k test, 28×28 grayscale).
 Normalization is computed on the training set only and applied to both train and test.
 
+
 <!-- DATA_STATS -->
 ##Experiments (Objectives → Variants → Results → Analysis)
 
@@ -92,6 +93,7 @@ m2_light_bn, m2_light_do, m2_light_bn_do, m2_light_bn_do_gap
 
 Auto-generated results and analysis
 
+
 <!-- MODEL2_RESULTS -->
 ### Model3 — Advanced Tweaks Toward Target
 
@@ -119,13 +121,6 @@ Auto-generated results, target checks, and analysis
 
 ##Observations & Learnings
 
-Capacity vs. accuracy trade-off (e.g., m1_big vs m1_light)
-
-BN/DO effects (stability/overfitting vs m1_light)
-
-GAP efficiency (parameter cuts with minimal accuracy loss)
-
-Augmentation + StepLR impact (pushing tiny model to the target)
 
 <!-- OBSERVATIONS -->
 
